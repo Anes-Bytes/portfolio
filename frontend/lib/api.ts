@@ -3,6 +3,10 @@ import { aboutData, blogData, portfolioData, profileData, resumeData } from './p
 
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.aness.ir/api';
 const API_ORIGIN = API_BASE_URL.replace(/\/api\/?$/, '');
+const SUPPORTED_LANGS = ['en', 'fa'] as const;
+type GetPortfolioDataOptions = {
+  fallbackToLocal?: boolean;
+};
 
 function resolveAssetUrl(value: string | null | undefined): string {
   if (!value) {
@@ -113,45 +117,120 @@ function buildFallbackPortfolioData(): APIResponse {
   };
 }
 
-export async function getPortfolioData(lang: string = 'en') {
-  try {
+export async function getPortfolioData(
+  lang: string = 'en',
+  options: GetPortfolioDataOptions = {}
+) {
+  const { fallbackToLocal = true } = options;
+  const fetchPortfolioByLang = async (targetLang: string) => {
     const res = await fetch(`${API_BASE_URL}/portfolio/`, {
       cache: 'force-cache',
-      next: { revalidate: 86400, tags: [`portfolio-${lang}`] },
+      next: { revalidate: 86400, tags: [`portfolio-${targetLang}`] },
       headers: {
-        'Accept-Language': lang,
+        'Accept-Language': targetLang,
       },
     });
 
     if (!res.ok) {
-      console.warn(`Portfolio API request failed (${res.status}). Falling back to local data.`);
-      return buildFallbackPortfolioData();
+      throw new Error(`Portfolio API request failed (${res.status}) for ${targetLang}`);
     }
 
     const data: APIResponse = await res.json();
     return normalizeApiResponse(data);
+  };
+
+  try {
+    const requestedLang = lang === 'fa' ? 'fa' : 'en';
+    const alternateLang = requestedLang === 'fa' ? 'en' : 'fa';
+
+    const [requestedResult, alternateResult] = await Promise.allSettled([
+      fetchPortfolioByLang(requestedLang),
+      fetchPortfolioByLang(alternateLang),
+    ]);
+
+    const requestedData =
+      requestedResult.status === 'fulfilled' ? requestedResult.value : null;
+    const alternateData =
+      alternateResult.status === 'fulfilled' ? alternateResult.value : null;
+
+    const baseData = requestedData || alternateData;
+    if (!baseData) {
+      if (!fallbackToLocal) {
+        throw new Error('Portfolio API is unreachable for both languages.');
+      }
+      console.warn('Portfolio API is unreachable for both languages. Falling back to local data.');
+      return buildFallbackPortfolioData();
+    }
+
+    const mergedBlogMap = new Map<number, APIResponse['blog'][number]>();
+    const sourceBlogs = [
+      ...(requestedData?.blog || []),
+      ...(alternateData?.blog || []),
+    ];
+
+    for (const post of sourceBlogs) {
+      const existing = mergedBlogMap.get(post.id);
+      if (!existing) {
+        mergedBlogMap.set(post.id, post);
+        continue;
+      }
+
+      mergedBlogMap.set(post.id, {
+        ...existing,
+        ...post,
+        slug: existing.slug || post.slug,
+        image: existing.image || post.image,
+        short_description: existing.short_description || post.short_description,
+        content: existing.content || post.content,
+      });
+    }
+
+    return {
+      ...baseData,
+      blog: Array.from(mergedBlogMap.values()).sort((a, b) => {
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      }),
+    };
   } catch (error) {
+    if (!fallbackToLocal) {
+      throw error;
+    }
     console.warn('Portfolio API is unreachable. Falling back to local data.', error);
     return buildFallbackPortfolioData();
   }
 }
 
 export async function getBlogPost(slug: string, lang: string = 'en') {
-  const res = await fetch(`${API_BASE_URL}/blog/${slug}/`, {
-    cache: 'force-cache',
-    next: { revalidate: 86400, tags: [`blog-${lang}-${slug}`] },
-    headers: {
-      'Accept-Language': lang,
-    },
-  });
-  if (!res.ok) {
-    throw new Error('Failed to fetch blog post');
+  const preferredLang = lang === 'fa' ? 'fa' : 'en';
+  const languageOrder = [preferredLang, ...SUPPORTED_LANGS.filter((l) => l !== preferredLang)];
+  let lastError: unknown = null;
+
+  for (const targetLang of languageOrder) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/blog/${slug}/`, {
+        cache: 'force-cache',
+        next: { revalidate: 86400, tags: [`blog-${targetLang}-${slug}`] },
+        headers: {
+          'Accept-Language': targetLang,
+        },
+      });
+
+      if (!res.ok) {
+        lastError = new Error(`Failed to fetch blog post (${res.status}) for ${targetLang}`);
+        continue;
+      }
+
+      const post = await res.json();
+      return {
+        ...post,
+        image: resolveAssetUrl(post.image),
+      };
+    } catch (error) {
+      lastError = error;
+    }
   }
-  const post = await res.json();
-  return {
-    ...post,
-    image: resolveAssetUrl(post.image),
-  };
+
+  throw (lastError instanceof Error ? lastError : new Error('Failed to fetch blog post'));
 }
 
 export async function submitProjectRequest(data: {

@@ -12,6 +12,41 @@ type Props = {
 
 export const revalidate = 86400
 
+function BackendUnavailableState({ locale }: { locale: SupportedLang }) {
+  const isFa = locale === 'fa'
+  return (
+    <div className="min-h-screen bg-[#070b12] p-3 sm:p-4 md:p-6 lg:p-12 flex items-center justify-center text-slate-100">
+      <div className="preload-shell w-[min(92vw,560px)] rounded-2xl border border-slate-700/80 bg-[#0b111b]/95 p-5 shadow-2xl shadow-black/60">
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="h-2.5 w-2.5 rounded-full bg-red-400/80" />
+            <span className="h-2.5 w-2.5 rounded-full bg-amber-400/80" />
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/80" />
+          </div>
+          <span className="font-mono text-[10px] tracking-widest text-slate-400">BACKEND:OFFLINE</span>
+        </div>
+        <div className="preload-noise mb-3 h-px w-full bg-slate-700/70" />
+        <div className="font-mono text-xs sm:text-sm text-slate-200 space-y-1">
+          <p className="preload-line preload-line-1">{`> connect api.aness.ir`}</p>
+          <p className="preload-line preload-line-2">{`> fetch /api/portfolio/`}</p>
+          <p className="preload-line preload-line-3 text-destructive">{`> status :: unavailable`}</p>
+          <p className="mt-3 text-slate-400">
+            {isFa
+              ? 'ارتباط با بک‌اند برقرار نشد. لطفا چند لحظه بعد دوباره تلاش کنید.'
+              : 'Backend is currently unavailable. Please try again shortly.'}
+          </p>
+        </div>
+        <div className="mt-3 flex items-center gap-2">
+          <span className="h-3.5 w-3.5 animate-spin rounded-full border border-accent/35 border-t-accent" />
+          <span className="font-mono text-[10px] tracking-wider text-accent/90">
+            {isFa ? 'RETRYING' : 'RETRYING'}
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = await params
   const locale = (lang === 'fa' ? 'fa' : 'en') as SupportedLang
@@ -71,8 +106,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Home({ params }: Props) {
   const { lang } = await params
   const locale = (lang === 'fa' ? 'fa' : 'en') as SupportedLang
+  let dynamicData: APIResponse
+  try {
+    dynamicData = await getPortfolioData(lang, { fallbackToLocal: false })
+  } catch {
+    return <BackendUnavailableState locale={locale} />
+  }
+
   const dictionary = await getDictionary(lang as 'en' | 'fa')
-  const dynamicData: APIResponse = await getPortfolioData(lang)
 
   // Prepare data for components
   const profile = dynamicData.profile
