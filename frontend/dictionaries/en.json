@@ -1,0 +1,59 @@
+{
+  "sidebar": {
+    "email": "Email",
+    "phone": "Phone",
+    "birthday": "Birthday",
+    "location": "Location"
+  },
+  "nav": {
+    "about": "About",
+    "resume": "Resume",
+    "portfolio": "Portfolio",
+    "blog": "Blog",
+    "contact": "Project Request"
+  },
+  "about": {
+    "title": "About Me",
+    "services": "What I'm Doing",
+    "githubStats": "GitHub Stats",
+    "githubRepos": "GitHub Repositories",
+    "repos": "Repos",
+    "stars": "Stars",
+    "followers": "Followers",
+    "following": "Following",
+    "noDescription": "No description provided.",
+    "other": "Other"
+  },
+  "resume": {
+    "title": "Resume",
+    "education": "Education",
+    "experience": "Experience",
+    "skills": "My Skills"
+  },
+  "portfolio": {
+    "title": "Portfolio",
+    "all": "All",
+    "preview": "Preview",
+    "github": "GitHub"
+  },
+  "blog": {
+    "title": "Blog",
+    "noPosts": "No blog posts found.",
+    "readMore": "Read More",
+    "backToPortfolio": "Back to Portfolio",
+    "tags": "Tags"
+  },
+  "contact": {
+    "title": "Project Request",
+    "formTitle": "Tell me about your project and preferred contact method.",
+    "fullName": "Full Name",
+    "projectTitle": "Project Title",
+    "description": "Project Description",
+    "contactInfo": "Email, Telegram ID, or Phone",
+    "submit": "Send Request",
+    "sending": "Sending...",
+    "success": "Your request was sent successfully.",
+    "sendAnother": "Send Another Request",
+    "error": "Failed to send request."
+  }
+}

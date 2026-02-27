@@ -1,0 +1,59 @@
+{
+  "sidebar": {
+    "email": "ایمیل",
+    "phone": "تلفن",
+    "birthday": "تاریخ تولد",
+    "location": "موقعیت"
+  },
+  "nav": {
+    "about": "درباره من",
+    "resume": "رزومه",
+    "portfolio": "نمونه‌کارها",
+    "blog": "وبلاگ",
+    "contact": "درخواست پروژه"
+  },
+  "about": {
+    "title": "درباره من",
+    "services": "خدمات من",
+    "githubStats": "آمار گیت‌هاب",
+    "githubRepos": "مخزن‌های گیت‌هاب",
+    "repos": "ریپو",
+    "stars": "ستاره",
+    "followers": "دنبال‌کننده",
+    "following": "دنبال‌شونده",
+    "noDescription": "توضیحی ثبت نشده است.",
+    "other": "سایر"
+  },
+  "resume": {
+    "title": "رزومه",
+    "education": "تحصیلات",
+    "experience": "تجربه‌ها",
+    "skills": "مهارت‌ها"
+  },
+  "portfolio": {
+    "title": "نمونه‌کارها",
+    "all": "همه",
+    "preview": "مشاهده",
+    "github": "گیت‌هاب"
+  },
+  "blog": {
+    "title": "وبلاگ",
+    "noPosts": "هیچ پستی پیدا نشد.",
+    "readMore": "ادامه مطلب",
+    "backToPortfolio": "بازگشت به پورتفولیو",
+    "tags": "برچسب‌ها"
+  },
+  "contact": {
+    "title": "درخواست پروژه",
+    "formTitle": "جزئیات پروژه و راه ارتباطی دلخواهت را وارد کن.",
+    "fullName": "نام و نام خانوادگی",
+    "projectTitle": "عنوان پروژه",
+    "description": "توضیحات پروژه",
+    "contactInfo": "ایمیل، آی‌دی تلگرام یا شماره تلفن",
+    "submit": "ارسال درخواست",
+    "sending": "در حال ارسال...",
+    "success": "درخواست شما با موفقیت ارسال شد.",
+    "sendAnother": "ارسال درخواست جدید",
+    "error": "ارسال درخواست ناموفق بود."
+  }
+}
