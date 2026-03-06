@@ -1,4 +1,4 @@
-import { Github, Send, Linkedin } from 'lucide-react'
+﻿import { Github, Send, Linkedin } from 'lucide-react'
 
 interface FooterProps {
   onNavigate: (section: string) => void
@@ -71,14 +71,14 @@ export function Footer({
 
           <div className="text-center md:text-right">
             <p className="text-sm text-muted-foreground">
-              © 2026 - Made with coffee and love by{' '}
+              made with ❤️ and lots of ☕ by{' '}
               <a
                 href="https://t.me/AnesPy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-bold text-foreground hover:text-accent transition-colors"
+                className="font-bold text-accent hover:opacity-80 transition-opacity"
               >
-                AnesPy@
+                @AnesPy
               </a>
             </p>
           </div>
@@ -87,3 +87,4 @@ export function Footer({
     </footer>
   )
 }
+

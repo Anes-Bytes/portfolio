@@ -1,8 +1,20 @@
 import { APIResponse } from './types';
 import { aboutData, blogData, portfolioData, profileData, resumeData } from './portfolio-data';
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.aness.ir/api';
-const API_ORIGIN = API_BASE_URL.replace(/\/api\/?$/, '');
+const PROD_API_BASE_URL = 'https://api.aness.ir/api';
+const DEV_API_BASE_URL = 'http://127.0.0.1:8000/api';
+const rawApiBaseUrl = (process.env.NEXT_PUBLIC_API_URL || '').trim();
+
+export const API_BASE_URL =
+  rawApiBaseUrl || (process.env.NODE_ENV === 'development' ? DEV_API_BASE_URL : PROD_API_BASE_URL);
+
+const API_ORIGIN = (() => {
+  try {
+    return new URL(API_BASE_URL).origin;
+  } catch {
+    return API_BASE_URL.replace(/\/api\/?$/, '');
+  }
+})();
 const SUPPORTED_LANGS = ['en', 'fa'] as const;
 type GetPortfolioDataOptions = {
   fallbackToLocal?: boolean;

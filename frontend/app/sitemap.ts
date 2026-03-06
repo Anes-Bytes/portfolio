@@ -7,6 +7,15 @@ const locales: Array<'en' | 'fa'> = ['en', 'fa']
 
 const staticPaths = ['', '/about', '/services', '/contact', '/project-request']
 
+function languageAlternates(path: string) {
+  return {
+    languages: {
+      en: `${siteUrl}/en${path}`,
+      fa: `${siteUrl}/fa${path}`,
+    },
+  }
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date()
   const entries: MetadataRoute.Sitemap = []
@@ -18,6 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: now,
         changeFrequency: path === '' ? 'weekly' : 'monthly',
         priority: path === '' ? 1 : 0.8,
+        alternates: languageAlternates(path),
       })
     }
 
@@ -27,6 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: now,
         changeFrequency: 'monthly',
         priority: 0.8,
+        alternates: languageAlternates(`/services/${service.slug}`),
       })
     }
 
@@ -38,6 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           lastModified: new Date(post.updated_at || post.created_at || now),
           changeFrequency: 'weekly',
           priority: 0.7,
+          alternates: languageAlternates(`/blog/${post.slug}`),
         })
       }
     } catch {

@@ -121,11 +121,6 @@ export function websiteSchema(lang: SupportedLang) {
     alternateName: PERSON_NAME,
     url: absoluteUrl(withLang(lang)),
     inLanguage: lang === 'fa' ? 'fa-IR' : 'en',
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: `${SITE_URL}/${lang}/blog/{search_term_string}`,
-      'query-input': 'required name=search_term_string',
-    },
   }
 }
 

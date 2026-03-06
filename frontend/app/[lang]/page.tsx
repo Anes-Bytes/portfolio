@@ -1,4 +1,4 @@
-import { getPortfolioData } from '@/lib/api'
+﻿import { getPortfolioData } from '@/lib/api'
 import { APIResponse } from '@/lib/types'
 import { HomeClient } from '@/components/home-client'
 import { Metadata } from 'next'
@@ -32,7 +32,7 @@ function BackendUnavailableState({ locale }: { locale: SupportedLang }) {
           <p className="preload-line preload-line-3 text-destructive">{`> status :: unavailable`}</p>
           <p className="mt-3 text-slate-400">
             {isFa
-              ? 'ارتباط با بک‌اند برقرار نشد. لطفا چند لحظه بعد دوباره تلاش کنید.'
+              ? 'Ø§Ø±ØªØ¨Ø§Ø· Ø¨Ø§ Ø¨Ú©â€ŒØ§Ù†Ø¯ Ø¨Ø±Ù‚Ø±Ø§Ø± Ù†Ø´Ø¯. Ù„Ø·ÙØ§ Ú†Ù†Ø¯ Ù„Ø­Ø¸Ù‡ Ø¨Ø¹Ø¯ Ø¯ÙˆØ¨Ø§Ø±Ù‡ ØªÙ„Ø§Ø´ Ú©Ù†ÛŒØ¯.'
               : 'Backend is currently unavailable. Please try again shortly.'}
           </p>
         </div>
@@ -68,18 +68,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         lang: locale,
         title:
           locale === 'fa'
-            ? `آنس سلیمان زاده (AnesPy) | برنامه نویس فول استک`
+            ? `Ø¢Ù†Ø³ Ø³Ù„ÛŒÙ…Ø§Ù† Ø²Ø§Ø¯Ù‡ (AnesPy) | Ø¨Ø±Ù†Ø§Ù…Ù‡ Ù†ÙˆÛŒØ³ ÙÙˆÙ„ Ø§Ø³ØªÚ©`
             : `${data.profile.name} (AnesPy) | Full Stack Developer`,
         description:
           locale === 'fa'
-            ? 'پورتفولیو و خدمات توسعه وب آنس سلیمان زاده، توسعه دهنده Django و Next.js در ایران.'
+            ? 'Ù¾ÙˆØ±ØªÙÙˆÙ„ÛŒÙˆ Ùˆ Ø®Ø¯Ù…Ø§Øª ØªÙˆØ³Ø¹Ù‡ ÙˆØ¨ Ø¢Ù†Ø³ Ø³Ù„ÛŒÙ…Ø§Ù† Ø²Ø§Ø¯Ù‡ØŒ ØªÙˆØ³Ø¹Ù‡ Ø¯Ù‡Ù†Ø¯Ù‡ Django Ùˆ Next.js Ø¯Ø± Ø§ÛŒØ±Ø§Ù†.'
             : `${data.profile.name} portfolio: Django Developer, SaaS Developer, Python Backend and Next.js Full Stack services from Iran.`,
         keywords: [
           'Anes Soleimanzadeh',
           'AnesPy',
           'Anes Full Stack Developer',
-          'آنس سلیمان زاده',
-          'آنس برنامه نویس فول استک',
+          'Ø¢Ù†Ø³ Ø³Ù„ÛŒÙ…Ø§Ù† Ø²Ø§Ø¯Ù‡',
+          'Ø¢Ù†Ø³ Ø¨Ø±Ù†Ø§Ù…Ù‡ Ù†ÙˆÛŒØ³ ÙÙˆÙ„ Ø§Ø³ØªÚ©',
           'Django Developer',
           'SaaS Developer',
           'Python Backend Developer',
@@ -94,11 +94,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   } catch (e) {
     return buildPageMetadata({
       lang: locale,
-      title: locale === 'fa' ? 'پورتفولیو AnesPy' : 'AnesPy Portfolio',
+      title: locale === 'fa' ? 'Ù¾ÙˆØ±ØªÙÙˆÙ„ÛŒÙˆ AnesPy' : 'AnesPy Portfolio',
       description:
         locale === 'fa'
-          ? 'پورتفولیو و خدمات توسعه فول استک آنس سلیمان زاده.'
+          ? 'Ù¾ÙˆØ±ØªÙÙˆÙ„ÛŒÙˆ Ùˆ Ø®Ø¯Ù…Ø§Øª ØªÙˆØ³Ø¹Ù‡ ÙÙˆÙ„ Ø§Ø³ØªÚ© Ø¢Ù†Ø³ Ø³Ù„ÛŒÙ…Ø§Ù† Ø²Ø§Ø¯Ù‡.'
           : 'Full stack portfolio and services by Anes Soleimanzadeh.',
+      noIndex: true,
     })
   }
 }
@@ -106,14 +107,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Home({ params }: Props) {
   const { lang } = await params
   const locale = (lang === 'fa' ? 'fa' : 'en') as SupportedLang
+  const dictionary = await getDictionary(lang as 'en' | 'fa')
   let dynamicData: APIResponse
   try {
-    dynamicData = await getPortfolioData(lang, { fallbackToLocal: false })
+    dynamicData = await getPortfolioData(lang)
   } catch {
     return <BackendUnavailableState locale={locale} />
   }
-
-  const dictionary = await getDictionary(lang as 'en' | 'fa')
 
   // Prepare data for components
   const profile = dynamicData.profile
@@ -168,7 +168,7 @@ export default async function Home({ params }: Props) {
   const servicesSchema = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: locale === 'fa' ? 'خدمات AnesPy' : 'AnesPy Services',
+    name: locale === 'fa' ? 'Ø®Ø¯Ù…Ø§Øª AnesPy' : 'AnesPy Services',
     itemListElement: [
       {
         '@type': 'Service',
@@ -196,7 +196,7 @@ export default async function Home({ params }: Props) {
   const projectsSchema = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: locale === 'fa' ? 'پروژه‌ها' : 'Projects',
+    name: locale === 'fa' ? 'Ù¾Ø±ÙˆÚ˜Ù‡â€ŒÙ‡Ø§' : 'Projects',
     itemListElement: projectItems.map((project, index) => ({
       '@type': 'CreativeWork',
       position: index + 1,
@@ -211,7 +211,7 @@ export default async function Home({ params }: Props) {
   const blogSchema = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: locale === 'fa' ? 'مقالات بلاگ' : 'Blog Posts',
+    name: locale === 'fa' ? 'Ù…Ù‚Ø§Ù„Ø§Øª Ø¨Ù„Ø§Ú¯' : 'Blog Posts',
     itemListElement: blogPosts.map((post, index) => ({
       '@type': 'BlogPosting',
       position: index + 1,
@@ -241,3 +241,4 @@ export default async function Home({ params }: Props) {
     </>
   )
 }
+
